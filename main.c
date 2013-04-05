@@ -9,7 +9,7 @@
 #include <cv.h>
 #include <highgui.h>
 
-#include "cards.h"
+#include "imagehandler.h"
 
 /*
  * Variables necesarias para el bucle principal del juego

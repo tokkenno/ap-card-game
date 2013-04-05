@@ -1,3 +1,8 @@
+/*
+ * Funciones que identifican caracteristicas de la CPU en tiempo de ejecucion,
+ * como por ejemplo, el set de instrucciones soportadas.
+ */
+
 #ifndef CPUID_H
 #define	CPUID_H
 

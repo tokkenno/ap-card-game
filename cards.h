@@ -1,8 +1,6 @@
 /* 
- * File:   cards.h
- * Author: aitor
- *
- * Created on 25 de marzo de 2013, 5:15
+ * Contiene la definicion de el tipo de dato card (carta) y las funciones
+ * necesarias para su manipulacion.
  */
 
 #ifndef CARDS_H
@@ -10,14 +8,15 @@
 
 #include <cv.h>
 
-struct GameCard {
-    IplImage* imgdata;
-    int state;                  // 0 = Volteada, 1 = Descubierta, -1 = Volteada temporalmente
-};
-
-IplImage* loadImage(char*);
-
-IplImage* getReverseCardImage();
+typedef struct {
+    IplImage* frontimg;
+    IplImage* reverseimg;
+    int x_cord;
+    int y_cord;
+    int width;
+    int height;
+    int cardstate;                  // 0 = Volteada, 1 = Descubierta, -1 = Volteada temporalmente
+    int showstate;                  // 0 = Front, 1 = Reverse, 2 = ReverseHover
+} card;
 
 #endif	/* CARDS_H */
-

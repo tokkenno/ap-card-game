@@ -2,7 +2,6 @@
 
 #ifndef _WIN32
 
-// Funcion cpuid para el compilador GCC
 void cpuid(int CPUInfo[4],int InfoType){
     __asm__ __volatile__ (
         "cpuid":
@@ -16,7 +15,6 @@ void cpuid(int CPUInfo[4],int InfoType){
 
 #endif
 
-// Obtiene informacion acerca de la CPU
 cpu_info get_cpu_info() {
     cpu_info toret;
     
