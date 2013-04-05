@@ -22,6 +22,7 @@ int main(int argc, char** argv) {
     // Bucle principal del juego
     while(!quitcondition)
     {
+        SGE_Update(wppal);
     }
     
     SGE_Quit(wppal);

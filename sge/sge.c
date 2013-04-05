@@ -20,6 +20,18 @@ SGE_Window SGE_Init (char* title, int width, int height)
     return toret;
 }
 
+void SGE_Update (SGE_Window w)
+{
+    cvWaitKey(200);
+    if (w.surface.paintimgdata != NULL)
+    {
+        cvReleaseImage(&w.surface.imgdata);
+        w.surface.imgdata = w.surface.paintimgdata;
+        w.surface.paintimgdata = NULL;
+        cvShowImage(w.title, w.surface.imgdata);
+    }
+}
+
 void SGE_Quit (SGE_Window w)
 {
     cvDestroyWindow(w.title);
@@ -33,6 +45,7 @@ SGE_Surface SGE_CreateSurface (int width, int height)
     SGE_Surface toret;
     
     toret.imgdata = cvCreateImage(cvSize(width, height), 16, 4);
+    toret.paintimgdata = NULL;
     
     SGE_Rectangle dim;
     dim.width = width;

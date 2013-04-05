@@ -40,6 +40,8 @@ typedef struct SGE_Window {
 
 SGE_Window SGE_Init (char* name, int width, int height);
 
+void SGE_Update (SGE_Window w);
+
 void SGE_Quit (SGE_Window w);
 
 SGE_Surface SGE_CreateSurface (int width, int height);
