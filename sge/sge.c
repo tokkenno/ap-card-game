@@ -44,3 +44,20 @@ SGE_Surface SGE_CreateSurface (int width, int height)
     
     return toret;
 }
+
+SGE_Image SGE_LoadImage (char* path)
+{
+    SGE_Image toret;
+    IplImage* img;
+    
+    img = cvLoadImage(path, CV_LOAD_IMAGE_UNCHANGED);
+    
+    
+    if (!img)
+    {
+        printf("SGE_LoadImage => Error mientras se cargaba una imagen.");
+    }
+    
+    toret.imgdata = *img;
+    return toret;
+}

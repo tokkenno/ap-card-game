@@ -9,6 +9,10 @@
 #include <cv.h>
 #include <highgui.h>
 
+typedef union {
+    IplImage imgdata;
+} SGE_Image;
+
 typedef struct SGE_Rectangle {
     int width;
     int height;
@@ -25,6 +29,7 @@ typedef struct SGE_Color {
 
 typedef struct SGE_Surface {
     IplImage* imgdata;
+    IplImage* paintimgdata;
     SGE_Rectangle dimensions;
 } SGE_Surface;
 
@@ -38,6 +43,8 @@ SGE_Window SGE_Init (char* name, int width, int height);
 void SGE_Quit (SGE_Window w);
 
 SGE_Surface SGE_CreateSurface (int width, int height);
+
+SGE_Image SGE_LoadImage (char* path);
 
 #endif	/* SGE_H */
 
