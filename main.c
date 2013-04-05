@@ -6,38 +6,26 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <cv.h>
-#include <highgui.h>
+#include "sge/sge.h"
 
-#include "imagehandler.h"
-
-/*
- * Variables necesarias para el bucle principal del juego
- */
+// Nombre de la ventana del juego
+static char* window_name = "ap-card-game (alpha)";
 
 // Puntuacion del juego actual
-int points = 0; 
+int points = 0;
 
-/*
- * Bucle principal del juego
- */
-void loopPpal()
-{
-    
-}
-
-/*
- * Punto de entrada del programa.
- */
+// Punto de entrada del programa.
 int main(int argc, char** argv) {
+    int quitcondition = 0;
+    SGE_Window wppal = SGE_Init(window_name, 600, 400);
     
-    loadImage("ghoald");
+    // Bucle principal del juego
+    while(!quitcondition)
+    {
+    }
     
-    cvWaitKey(0);
-    
-    // Destruimos todas las ventanas
-    cvDestroyAllWindows();
+    SGE_Quit(wppal);
 
-    return (EXIT_SUCCESS);
+    return 0;
 }
 

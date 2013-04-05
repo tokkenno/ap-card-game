@@ -2,7 +2,6 @@
 #include <highgui.h>
 
 #include "imagehandler.h"
-#include "dialogs.h"
 
 IplImage* loadImage(char* path)
 {
@@ -10,9 +9,10 @@ IplImage* loadImage(char* path)
     
     img = cvLoadImage(path, CV_LOAD_IMAGE_UNCHANGED);
     
+    
     if (!img)
     {
-        showDialog("Error", "Ha ocurrido un error al cargar una imagen.\n");
+        printf("LoadImage => Error mientras se cargaba una imagen.");
     }
     
     return img;
