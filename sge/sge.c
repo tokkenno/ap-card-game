@@ -3,15 +3,15 @@
 #include <cv.h>
 #include <highgui.h>
 
-SGE_Window SGE_Init (char* title, int width, int height)
+SGE_Window* SGE_Init (char* title, int width, int height)
 {
-    SGE_Window toret;
+    SGE_Window* toret = malloc(sizeof *toret);
     
-    toret.surface = SGE_CreateSurface (width, height);
-    toret.title = title;
+    toret->surface = SGE_CreateSurface (width, height);
+    toret->title = title;
     
     cvNamedWindow(title, CV_WINDOW_AUTOSIZE);
-    cvShowImage(title, toret.surface.imgdata);
+    cvShowImage(title, toret->surface.imgdata);
     
     // Tenemos que esperar a que el otro hilo cree la ventana asincronamente.
     // Como OpenCv no ofrece una funcion para ello, nos "apañamos" esperando un rato.
@@ -20,22 +20,22 @@ SGE_Window SGE_Init (char* title, int width, int height)
     return toret;
 }
 
-void SGE_Update (SGE_Window w)
+void SGE_Update (SGE_Window* w)
 {
     cvWaitKey(200);
-    if (w.surface.paintimgdata != NULL)
+    if (w->surface.paintimgdata != NULL)
     {
-        cvReleaseImage(&w.surface.imgdata);
-        w.surface.imgdata = w.surface.paintimgdata;
-        w.surface.paintimgdata = NULL;
-        cvShowImage(w.title, w.surface.imgdata);
+        cvReleaseImage(&w->surface.imgdata);
+        w->surface.imgdata = w->surface.paintimgdata;
+        w->surface.paintimgdata = NULL;
+        cvShowImage(w->title, w->surface.imgdata);
     }
 }
 
-void SGE_Quit (SGE_Window w)
+void SGE_Quit (SGE_Window* w)
 {
-    cvDestroyWindow(w.title);
-    cvReleaseImage(&w.surface.imgdata);
+    cvDestroyWindow(w->title);
+    cvReleaseImage(&w->surface.imgdata);
     
     cvDestroyAllWindows();
 }

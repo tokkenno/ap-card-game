@@ -17,7 +17,8 @@ int points = 0;
 // Punto de entrada del programa.
 int main(int argc, char** argv) {
     int quitcondition = 0;
-    SGE_Window wppal = SGE_Init(window_name, 600, 400);
+    SGE_Window* wppal;
+    wppal = SGE_Init(window_name, 600, 400);
     
     // Bucle principal del juego
     while(!quitcondition)
