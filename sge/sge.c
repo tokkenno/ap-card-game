@@ -1,5 +1,7 @@
 #include "sge.h"
 
+#include <ctype.h>
+
 #include <cv.h>
 #include <highgui.h>
 
@@ -23,7 +25,7 @@ SGE_Window* SGE_Init (char* title, int width, int height)
 void SGE_Update (SGE_Window* w)
 {
     cvWaitKey(200);
-    if (w->surface.paintimgdata != NULL)
+    if (w->surface.paintimgdata != NULL && w->surface.paintimgdata != w->surface.imgdata)
     {
         cvReleaseImage(&w->surface.imgdata);
         w->surface.imgdata = w->surface.paintimgdata;
@@ -73,4 +75,32 @@ SGE_Image SGE_LoadImage (char* path)
     
     toret.imgdata = *img;
     return toret;
+}
+
+#pragma region Funciones de tiempo
+
+#ifdef _WIN32
+#include "timer/sge_timer_windows.h"
+#elif __unix__
+#include "timer/sge_timer_unix.h"
+#else
+#error Plataforma no soportada
+#endif
+
+unsigned long SGE_GetTicks ()
+{
+#ifdef _WIN32
+    return SGE_GetTicksWindows();
+#elif __unix__
+    return SGE_GetTicksUnix();
+#endif
+}
+
+void SGE_Delay (unsigned long ms)
+{
+#ifdef _WIN32
+    SGE_DelayWindows(ms);
+#elif __unix__
+    SGE_DelayUnix(ms);
+#endif
 }

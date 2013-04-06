@@ -81,5 +81,13 @@ SGE_Surface SGE_CreateSurface (int width, int height);
  */
 SGE_Image SGE_LoadImage (char* path);
 
+#pragma region Funciones de tiempo
+
+unsigned long SGE_GetTicks ();
+
+void SGE_Delay (unsigned long ms);
+
+#pragma endregion
+
 #endif	/* SGE_H */
 
