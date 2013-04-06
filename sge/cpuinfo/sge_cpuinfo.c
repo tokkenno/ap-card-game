@@ -1,6 +1,8 @@
 #include "sge_cpuinfo.h"
 
-#ifndef _WIN32
+#ifdef _WIN32
+#define cpuid __cpuid
+#else
 
 void cpuid(int CPUInfo[4],int InfoType){
     __asm__ __volatile__ (
@@ -15,8 +17,8 @@ void cpuid(int CPUInfo[4],int InfoType){
 
 #endif
 
-cpu_info get_cpu_info() {
-    cpu_info toret;
+SGE_CpuInfo SGE_GetCpuInfo() {
+    SGE_CpuInfo toret;
     
     toret.MMX = toret.SSE = toret.SSE2 = toret.SSE3 = toret.SSSE3 = 0;
     toret.SSE41 =  toret.SSE42 =  toret.AVX = toret.FMA3 = 0;

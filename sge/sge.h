@@ -7,50 +7,7 @@
 
 #include <cv.h>
 #include <highgui.h>
-
-/**
- * Estrucutura que contiene una imagen.
- */
-typedef union {
-    IplImage imgdata;   /**< Imagen en formato OpenCv */
-} SGE_Image;
-
-/**
- * Estructura que representa las dimensiones y posicion de una estructura restangular
- */
-typedef struct SGE_Rectangle {
-    int width;          /**< Ancho de la estructura */
-    int height;         /**< Alto de la estructura */
-    int pos_x;          /**< Coordenada x donde comienza la estructura */
-    int pos_y;          /**< Coordenada y donde comienza la estructura */
-} SGE_Rectangle;
-
-/**
- * Estructura que representa el color de un pixel
- */
-typedef struct SGE_Color {
-    char red;           /**< Valor del color rojo de un pixel */
-    char green;         /**< Valor del color verde de un pixel */
-    char blue;          /**< Valor del color azul de un pixel */
-    char alpha;         /**< Valor del canal alpha de un pixel */
-} SGE_Color;
-
-/**
- * Estructura que representa una superficie de dibujo
- */
-typedef struct SGE_Surface {
-    IplImage* imgdata;          /**< Imagen en formato OpenCv que representa lo mostrado en la pantalla */
-    IplImage* paintimgdata;     /**< Imagen en formato OpenCv sobre la que se dibuja el proximo frame */
-    SGE_Rectangle dimensions;   /**< Dimensiones de la superficie */
-} SGE_Surface;
-
-/**
- * Estructura que representa una ventana  
- */
-typedef struct SGE_Window {
-    SGE_Surface surface;        /**< Superficie de dibujado de la pantalla */
-    char* title;                /**< Titulo de la ventana */
-} SGE_Window;
+#include "sge_types.h"
 
 /**
  * Inicializa el SGE y crea una ventana para el juego.
@@ -83,8 +40,16 @@ SGE_Image SGE_LoadImage (char* path);
 
 #pragma region Funciones de tiempo
 
+/**
+ * Obtiene el numero de milisegundos desde que se ha inicializado el SGE
+ * @return Milisegundos
+ */
 unsigned long SGE_GetTicks ();
 
+/**
+ * Detiene el programa durante un tiempo determinado
+ * @param ms Tiempo en milisegundos
+ */
 void SGE_Delay (unsigned long ms);
 
 #pragma endregion

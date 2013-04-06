@@ -1,6 +1,5 @@
 #include "sge.h"
-
-#include <ctype.h>
+#include "sge_types.h"
 
 #include <cv.h>
 #include <highgui.h>
