@@ -42,7 +42,7 @@ void SGE_FreeSurface(SGE_Surface* srf);
 /**
  * Carga una imagen a partir de una ruta
  */
-SGE_Image SGE_LoadImage (char* path);
+SGE_Surface SGE_LoadImage (char* path);
 
 #pragma region Funciones de tiempo
 

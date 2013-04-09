@@ -15,13 +15,6 @@
 #endif
 
 /**
- * Estrucutura que contiene una imagen.
- */
-typedef union {
-    IplImage imgdata;   /**< Imagen en formato OpenCv */
-} SGE_Image;
-
-/**
  * Estructura que representa las dimensiones y posicion de una estructura restangular
  */
 typedef struct SGE_Rectangle {

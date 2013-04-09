@@ -66,20 +66,25 @@ void SGE_FreeSurface(SGE_Surface* srf)
     srf = NULL;
 }
 
-SGE_Image SGE_LoadImage (char* path)
+SGE_Surface SGE_LoadImage (char* path)
 {
-    SGE_Image toret;
+    SGE_Surface toret;
+    SGE_Rectangle dim;
     IplImage* img;
     
     img = cvLoadImage(path, CV_LOAD_IMAGE_UNCHANGED);
-    
     
     if (!img)
     {
         printf("SGE_LoadImage => Error mientras se cargaba una imagen.\n");
     }
     
-    toret.imgdata = *img;
+    dim.pos_x = dim.pos_y = 0;
+    dim.height = img->height;
+    dim.width = img->width;
+    
+    toret.dimensions = dim;
+    toret.imgdata = img;
     return toret;
 }
 
