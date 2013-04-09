@@ -34,6 +34,12 @@ void SGE_Quit (SGE_Window* w);
 SGE_Surface SGE_CreateSurface (int width, int height);
 
 /**
+ * Libera los recursos usados por una superficie
+ * @param srf Puntero a la superficie
+ */
+void SGE_FreeSurface(SGE_Surface* srf);
+
+/**
  * Carga una imagen a partir de una ruta
  */
 SGE_Image SGE_LoadImage (char* path);

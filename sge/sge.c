@@ -36,7 +36,7 @@ void SGE_Update (SGE_Window* w)
 void SGE_Quit (SGE_Window* w)
 {
     cvDestroyWindow(w->title);
-    cvReleaseImage(&w->surface.imgdata);
+    SGE_FreeSurface(&w->surface);
     
     cvDestroyAllWindows();
 }
@@ -59,6 +59,13 @@ SGE_Surface SGE_CreateSurface (int width, int height)
     return toret;
 }
 
+void SGE_FreeSurface(SGE_Surface* srf)
+{
+    cvReleaseImage(&srf->imgdata);
+    cvReleaseImage(&srf->paintimgdata);
+    srf = NULL;
+}
+
 SGE_Image SGE_LoadImage (char* path)
 {
     SGE_Image toret;
@@ -69,7 +76,7 @@ SGE_Image SGE_LoadImage (char* path)
     
     if (!img)
     {
-        printf("SGE_LoadImage => Error mientras se cargaba una imagen.");
+        printf("SGE_LoadImage => Error mientras se cargaba una imagen.\n");
     }
     
     toret.imgdata = *img;
