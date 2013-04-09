@@ -41,8 +41,33 @@ void SGE_FreeSurface(SGE_Surface* srf);
 
 /**
  * Carga una imagen a partir de una ruta
+ * @param path Ruta de la imagen
+ * @return Superficio de dibujo con la imagen cargada
  */
 SGE_Surface SGE_LoadImage (char* path);
+
+/**
+ * Redimensiona una superficie de trabajo (Y su contenido)
+ * @param srf Superficie a redimensionar
+ * @param width Nueva anchura
+ * @param height Nueva altura
+ */
+void SGE_ResizeSurface (SGE_Surface* srf, int width, int height);
+
+/**
+ * Clona una superficie de dibujo
+ * @param srf Superficie a clonar
+ * @return Nueva superficie
+ */
+SGE_Surface SGE_CloneSurface (const SGE_Surface* srf);
+
+/**
+ * Pega una superficie de dibujo en otra
+ * @param background Superficie de destino (Se modifica por referencia)
+ * @param topaste Superficie de origen
+ * @param position Posicion y dimensiones de destino
+ */
+void SGE_PasteSurface (SGE_Surface* background, const SGE_Surface* topaste, SGE_Rectangle position);
 
 #pragma region Funciones de tiempo
 
