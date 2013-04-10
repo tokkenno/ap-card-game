@@ -10,15 +10,16 @@
 #include <emmintrin.h>
 #include <xmmintrin.h>
 
-SGE_Window* SGE_Init (char* title, int width, int height)
+SGE_Window SGE_Init (char* title, int width, int height)
 {
-    SGE_Window* toret = malloc(sizeof *toret);
+    SGE_Window toret;
     
-    toret->surface = SGE_CreateSurface (width, height);
-    toret->title = title;
+    toret.imgBuffer = SGE_CreateSurface (width, height);
+    toret.imgWindow = toret.imgBuffer;
+    toret.title = title;
     
     cvNamedWindow(title, CV_WINDOW_AUTOSIZE);
-    cvShowImage(title, toret->surface.imgdata);
+    cvShowImage(title, toret.imgWindow.imgData);
     
     // Tenemos que esperar a que el otro hilo cree la ventana asincronamente.
     // Como OpenCv no ofrece una funcion para ello, nos "apañamos" esperando un rato.
@@ -30,19 +31,21 @@ SGE_Window* SGE_Init (char* title, int width, int height)
 void SGE_Update (SGE_Window* w)
 {
     cvWaitKey(200);
-    if (w->surface.paintimgdata != NULL && w->surface.paintimgdata != w->surface.imgdata)
+    if (&w->imgBuffer != NULL && w->imgBuffer != w->imgWindow)
     {
-        cvReleaseImage(&w->surface.imgdata);
-        w->surface.imgdata = w->surface.paintimgdata;
-        w->surface.paintimgdata = NULL;
-        cvShowImage(w->title, w->surface.imgdata);
+        SGE_FreeSurface(&w->imgWindow);
+        &w->imgWindow = &w->imgBuffer;
+        w->imgBuffer = SGE_CloneSurface(&w->imgWindow);
+        cvShowImage(w->title, w->imgWindow.imgData);
     }
 }
 
 void SGE_Quit (SGE_Window* w)
 {
     cvDestroyWindow(w->title);
-    SGE_FreeSurface(&w->surface);
+    
+    SGE_FreeSurface(&w->imgWindow);
+    SGE_FreeSurface(&w->imgBuffer);
     
     cvDestroyAllWindows();
 }
@@ -51,8 +54,7 @@ SGE_Surface SGE_CreateSurface (int width, int height)
 {
     SGE_Surface toret;
     
-    toret.imgdata = cvCreateImage(cvSize(width, height), 16, 4);
-    toret.paintimgdata = NULL;
+    toret.imgData = cvCreateImage(cvSize(width, height), 16, 4);
     
     SGE_Rectangle dim;
     dim.width = width;
@@ -67,8 +69,7 @@ SGE_Surface SGE_CreateSurface (int width, int height)
 
 void SGE_FreeSurface(SGE_Surface* srf)
 {
-    cvReleaseImage(&srf->imgdata);
-    cvReleaseImage(&srf->paintimgdata);
+    cvReleaseImage(&srf->imgData);
     srf = NULL;
 }
 
@@ -90,18 +91,18 @@ SGE_Surface SGE_LoadImage (char* path)
     dim.width = img->width;
     
     toret.dimensions = dim;
-    toret.imgdata = img;
+    toret.imgData = img;
     return toret;
 }
 
 void SGE_ResizeSurface (SGE_Surface* srf, int width, int height)
 {
-    if (srf->imgdata->height != height || srf->imgdata->width != width)
+    if (srf->imgData->height != height || srf->imgData->width != width)
     {
         SGE_Surface aux = SGE_CreateSurface (width, height);
-        cvResize (srf->imgdata, aux.imgdata, CV_INTER_CUBIC);
-        cvReleaseImage(&srf->imgdata);
-        srf->imgdata = cvCloneImage(aux.imgdata);
+        cvResize (srf->imgData, aux.imgData, CV_INTER_CUBIC);
+        cvReleaseImage(&srf->imgData);
+        srf->imgData = cvCloneImage(aux.imgData);
         SGE_FreeSurface(&aux);
     }
 }
@@ -110,9 +111,7 @@ SGE_Surface SGE_CloneSurface (const SGE_Surface* srf)
 {
     SGE_Surface toret;
     
-    toret.imgdata = cvCloneImage(srf->imgdata);
-    if (srf->paintimgdata != NULL)
-        toret.paintimgdata = cvCloneImage(srf->imgdata);
+    toret.imgData = cvCloneImage(srf->imgData);
     toret.dimensions = srf->dimensions;
     
     return toret;
@@ -124,10 +123,10 @@ void SGE_PasteSurfaceWithMaskSSE (SGE_Surface* background, const SGE_Surface* to
    int index, jindex;
    __m128i pixel, pixelMask, pixelBg, *bgPointer, *tpPointer, *msPointer;
    
-   bgPointer = (__m128i*) background->imgdata->imageData;
-   tpPointer = (__m128i*) topaste->imgdata->imageData;
+   bgPointer = (__m128i*) background->imgData->imageData;
+   tpPointer = (__m128i*) topaste->imgData->imageData;
    if (mask != NULL)
-       msPointer = (__m128i*) mask->imgdata->imageData;
+       msPointer = (__m128i*) mask->imgData->imageData;
    
    int ylimit, xlimit;
    if ((ylimit = position.height + position.pos_y) > background->dimensions.height)
@@ -140,7 +139,7 @@ void SGE_PasteSurfaceWithMaskSSE (SGE_Surface* background, const SGE_Surface* to
     {
         for(index = position.pos_y; index < ylimit; index++)
         {
-            bgPointer = (__m128i*)(background->imgdata->imageData + index * 4);
+            bgPointer = (__m128i*)(background->imgData->imageData + index * 4);
 
             for(jindex = position.pos_x; jindex < xlimit; jindex+=4)
             {
@@ -152,7 +151,7 @@ void SGE_PasteSurfaceWithMaskSSE (SGE_Surface* background, const SGE_Surface* to
     {
         for(index = position.pos_y; index < ylimit; index++)
         {
-            bgPointer = (__m128i*)(background->imgdata->imageData + index * 4);
+            bgPointer = (__m128i*)(background->imgData->imageData + index * 4);
 
             for(jindex = position.pos_x; jindex < xlimit; jindex+=4)
             {
@@ -176,7 +175,7 @@ void SGE_PasteSurface (SGE_Surface* background, const SGE_Surface* topaste, SGE_
     
     // Redimensionamos la imagen si es necesario
     SGE_Surface topaste2;
-    if (topaste->imgdata->height != position.height || topaste->imgdata->width != position.width)
+    if (topaste->imgData->height != position.height || topaste->imgData->width != position.width)
     {
         topaste2 = SGE_CloneSurface(topaste);
         SGE_ResizeSurface(&topaste2, position.width, position.height);

@@ -38,8 +38,7 @@ typedef struct SGE_Color {
  * Estructura que representa una superficie de dibujo
  */
 typedef struct SGE_Surface {
-    IplImage* imgdata;          /**< Imagen en formato OpenCv que representa lo mostrado en la pantalla */
-    IplImage* paintimgdata;     /**< Imagen en formato OpenCv sobre la que se dibuja el proximo frame */
+    IplImage* imgData;          /**< Imagen en formato OpenCv */
     SGE_Rectangle dimensions;   /**< Dimensiones de la superficie */
 } SGE_Surface;
 
@@ -47,7 +46,8 @@ typedef struct SGE_Surface {
  * Estructura que representa una ventana  
  */
 typedef struct SGE_Window {
-    SGE_Surface surface;        /**< Superficie de dibujado de la pantalla */
+    SGE_Surface imgWindow;        /**< Imagen que se muestra por pantalla */
+    SGE_Surface imgBuffer;        /**< Superficie de dibujado del proximo frame */
     char* title;                /**< Titulo de la ventana */
 } SGE_Window;
 
