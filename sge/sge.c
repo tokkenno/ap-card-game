@@ -31,10 +31,10 @@ SGE_Window SGE_Init (char* title, int width, int height)
 void SGE_Update (SGE_Window* w)
 {
     cvWaitKey(200);
-    if (&w->imgBuffer != NULL && w->imgBuffer != w->imgWindow)
+    if (&w->imgBuffer != NULL && w->imgBuffer.imgData != w->imgWindow.imgData)
     {
         SGE_FreeSurface(&w->imgWindow);
-        &w->imgWindow = &w->imgBuffer;
+        w->imgWindow = w->imgBuffer;
         w->imgBuffer = SGE_CloneSurface(&w->imgWindow);
         cvShowImage(w->title, w->imgWindow.imgData);
     }
