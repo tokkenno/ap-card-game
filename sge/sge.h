@@ -16,7 +16,7 @@
  * @param height Alto de la ventana destino
  * @return Ventana en formato SGE
  */
-SGE_Window* SGE_Init (char* name, int width, int height);
+SGE_Window SGE_Init (char* name, int width, int height);
 
 /**
  * Actualiza la ventana con la nueva imagen generada.
