@@ -5,6 +5,8 @@
 #include <cv.h>
 #include <highgui.h>
 
+#include <stdio.h>
+
 // Como el programa elige que set de instrucciones usar en tiempo de ejecucion, se compila
 // con todas las instrucciones.
 #include <emmintrin.h>
@@ -162,6 +164,59 @@ void SGE_PasteSurfaceWithMaskSSE2 (SGE_Surface* background, const SGE_Surface* t
                 pixel = _mm_andnot_si128(pixelMask, pixel);             // (topaste || mask)
                 __m128i auxp = _mm_and_si128(pixelBg, pixelMask);       // (background && mask)
                 pixel = _mm_xor_si128(pixel, auxp);                     // ((topaste || mask) | (background && mask))
+                
+                *bgPointer++ = pixel;
+            }
+       }
+   }
+}
+
+// Funcion privada que pega una superficie sobre otra usando instrucciones SSE
+void SGE_PasteSurfaceWithMaskMMX (SGE_Surface* background, const SGE_Surface* topaste, const SGE_Surface* mask, SGE_Rectangle position)
+{
+   int index, jindex;
+   __m64 pixel, pixelMask, pixelBg, *bgPointer, *tpPointer, *msPointer;
+   
+   bgPointer = (__m64*) background->imgData->imageData;
+   tpPointer = (__m64*) topaste->imgData->imageData;
+   if (mask != NULL)
+       msPointer = (__m64*) mask->imgData->imageData;
+   
+   int ylimit, xlimit;
+   if ((ylimit = position.height + position.pos_y) > background->dimensions.height)
+       ylimit = background->dimensions.height;
+   if ((xlimit = position.width + position.pos_x) > background->dimensions.width)
+       xlimit = background->dimensions.width;
+   
+    // Comprobamos si la mascara es nula para poder optimizar el proceso
+    if (mask == NULL)
+    {
+        for(index = position.pos_y; index < ylimit; index++)
+        {
+            bgPointer = (__m64*)(background->imgData->imageData + index * 4);
+
+            for(jindex = position.pos_x; jindex < xlimit; jindex+=4)
+            {
+                *bgPointer++ = *tpPointer++;
+                *bgPointer++ = *tpPointer++;
+            }
+        }
+    }
+    else
+    {
+        for(index = position.pos_y; index < ylimit; index++)
+        {
+            bgPointer = (__m64*)(background->imgData->imageData + index * 4);
+
+            for(jindex = position.pos_x; jindex < xlimit; jindex+=2)
+            {
+                pixel = *tpPointer++;           // Valor de un pixel de la imagen a pegar
+                pixelMask = *msPointer++;       // Valor de la mascara en ese pixel
+                pixelBg = *bgPointer;           // Valor del fondo en ese pixel
+                
+                pixel = _mm_andnot_si64(pixelMask, pixel);             // (topaste || mask)
+                __m64 auxp = _mm_and_si64(pixelBg, pixelMask);       // (background && mask)
+                pixel = _mm_xor_si64(pixel, auxp);                     // ((topaste || mask) | (background && mask))
                 
                 *bgPointer++ = pixel;
             }
