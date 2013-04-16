@@ -141,7 +141,7 @@ void SGE_PasteSurfaceWithMaskSSE2 (SGE_Surface* background, const SGE_Surface* t
     {
         for(index = position.pos_y; index < ylimit; index++)
         {
-            bgPointer = (__m128i*)(background->imgData->imageData + index * 4);
+            bgPointer = (__m128i*)(background->imgData->imageData + (index << 2));
 
             for(jindex = position.pos_x; jindex < xlimit; jindex+=4)
             {
@@ -153,7 +153,7 @@ void SGE_PasteSurfaceWithMaskSSE2 (SGE_Surface* background, const SGE_Surface* t
     {
         for(index = position.pos_y; index < ylimit; index++)
         {
-            bgPointer = (__m128i*)(background->imgData->imageData + index * 4);
+            bgPointer = (__m128i*)(background->imgData->imageData + (index << 2));
 
             for(jindex = position.pos_x; jindex < xlimit; jindex+=4)
             {
@@ -193,7 +193,7 @@ void SGE_PasteSurfaceWithMaskMMX (SGE_Surface* background, const SGE_Surface* to
     {
         for(index = position.pos_y; index < ylimit; index++)
         {
-            bgPointer = (__m64*)(background->imgData->imageData + index * 4);
+            bgPointer = (__m64*)(background->imgData->imageData + (index << 2));
 
             for(jindex = position.pos_x; jindex < xlimit; jindex+=4)
             {
@@ -206,7 +206,7 @@ void SGE_PasteSurfaceWithMaskMMX (SGE_Surface* background, const SGE_Surface* to
     {
         for(index = position.pos_y; index < ylimit; index++)
         {
-            bgPointer = (__m64*)(background->imgData->imageData + index * 4);
+            bgPointer = (__m64*)(background->imgData->imageData + (index << 2));
 
             for(jindex = position.pos_x; jindex < xlimit; jindex+=2)
             {
