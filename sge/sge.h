@@ -69,6 +69,15 @@ SGE_Surface SGE_CloneSurface (const SGE_Surface* srf);
  */
 void SGE_PasteSurface (SGE_Surface* background, const SGE_Surface* topaste, SGE_Rectangle position);
 
+/**
+ * Pega una superficie de dibujo en otra usando una mascara
+ * @param background Superficie de destino (Se modifica por referencia)
+ * @param topaste Superficie de origen
+ * @param mask Mascara de la superficie de origen
+ * @param position Posicion y dimensiones de destino
+ */
+void SGE_PasteSurfaceWithMask (SGE_Surface* background, const SGE_Surface* topaste, const SGE_Surface* mask, SGE_Rectangle position);
+
 #pragma region Funciones de tiempo
 
 /**

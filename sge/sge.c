@@ -118,7 +118,7 @@ SGE_Surface SGE_CloneSurface (const SGE_Surface* srf)
 }
 
 // Funcion privada que pega una superficie sobre otra usando instrucciones SSE
-void SGE_PasteSurfaceWithMaskSSE (SGE_Surface* background, const SGE_Surface* topaste, const SGE_Surface* mask, SGE_Rectangle position)
+void SGE_PasteSurfaceWithMaskSSE2 (SGE_Surface* background, const SGE_Surface* topaste, const SGE_Surface* mask, SGE_Rectangle position)
 {
    int index, jindex;
    __m128i pixel, pixelMask, pixelBg, *bgPointer, *tpPointer, *msPointer;
@@ -169,7 +169,12 @@ void SGE_PasteSurfaceWithMaskSSE (SGE_Surface* background, const SGE_Surface* to
    }
 }
 
-void SGE_PasteSurface (SGE_Surface* background, const SGE_Surface* topaste, SGE_Rectangle position)
+void SGE_PasteSurface (SGE_Surface* background, const SGE_Surface* topaste, SGE_Rectangle position) 
+{
+    SGE_PasteSurfaceWithMask(background, topaste, NULL, position);
+}
+
+void SGE_PasteSurfaceWithMask (SGE_Surface* background, const SGE_Surface* topaste, const SGE_Surface* mask, SGE_Rectangle position)
 {
     SGE_CpuInfo cpuid = SGE_GetCpuInfo();
     
@@ -183,13 +188,21 @@ void SGE_PasteSurface (SGE_Surface* background, const SGE_Surface* topaste, SGE_
     
     // Llamamos a la funcion privada correspondiente en orden de set de instrucciones,
     // del mas rapido al mas lento.
-    if (cpuid.SSE && &topaste2 == NULL)
+    if (cpuid.SSE2 && &topaste2 == NULL)
     {
-        SGE_PasteSurfaceWithMaskSSE (background, topaste, NULL, position);
+        SGE_PasteSurfaceWithMaskSSE2 (background, topaste, mask, position);
     }
-    else if (cpuid.SSE && &topaste2 != NULL)
+    else if (cpuid.SSE2 && &topaste2 != NULL)
     {
-        SGE_PasteSurfaceWithMaskSSE (background, &topaste2, NULL, position);
+        SGE_PasteSurfaceWithMaskSSE2 (background, &topaste2, mask, position);
+    }
+    else if (cpuid.MMX && &topaste2 == NULL)
+    {
+        SGE_PasteSurfaceWithMaskMMX (background, topaste, mask, position);
+    }
+    else if (cpuid.MMX && &topaste2 != NULL)
+    {
+        SGE_PasteSurfaceWithMaskMMX (background, &topaste2, mask, position);
     }
     else
     {
