@@ -94,5 +94,15 @@ void SGE_Delay (unsigned long ms);
 
 #pragma endregion
 
+/**
+ * Crea y inicializa una estructura SGE_Rectangle
+ * @param width Altura del rectangulo
+ * @param height Ancho del rectangulo
+ * @param pos_x Posicion del rectangulo en el eje X
+ * @param pos_y Posicion del rectangulo en el eje Y
+ * @return Estructura SGE_Rectangle inicializada
+ */
+SGE_Rectangle SGE_CreateRectangle (int width, int height, int pos_x, int pos_y);
+
 #endif	/* SGE_H */
 

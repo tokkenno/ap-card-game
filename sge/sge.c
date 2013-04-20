@@ -287,7 +287,10 @@ void SGE_PasteSurface (SGE_Surface* background, const SGE_Surface* topaste, SGE_
 }
 
 void SGE_PasteSurfaceWithMask (SGE_Surface* background, const SGE_Surface* topaste, const SGE_Surface* mask, SGE_Rectangle position)
-{
+{ 
+#if defined SGE_DEBUG && SGE_DEBUG == 1
+    printf("SGE Debug (SGE_PasteSurfaceWithMask) => Dibujando...");
+#endif
     SGE_CpuInfo cpuid = SGE_GetCpuInfo();
     
     // Redimensionamos la imagen si es necesario
@@ -363,4 +366,14 @@ void SGE_Delay (unsigned long ms)
 #elif __unix__
     SGE_DelayUnix(ms);
 #endif
+}
+
+SGE_Rectangle SGE_CreateRectangle (int width, int height, int pos_x, int pos_y)
+{
+    SGE_Rectangle pos;
+    pos.width = width;
+    pos.height = height;
+    pos.pos_x = pos_x;
+    pos.pos_y = pos_y;
+    return pos;
 }
