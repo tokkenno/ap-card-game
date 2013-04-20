@@ -182,6 +182,53 @@ void SGE_PasteSurfaceWithMaskSSE2 (SGE_Surface* background, const SGE_Surface* t
 }
 
 // Funcion privada que pega una superficie sobre otra usando instrucciones SSE
+void SGE_PasteSurfaceWithMaskAll (SGE_Surface* background, const SGE_Surface* topaste, const SGE_Surface* mask, SGE_Rectangle position)
+{
+    
+    int i, j;
+    
+    if (mask != NULL)
+    {
+        for (i = position.pos_y; i < position.pos_y + topaste->imgData->height; i++)
+        {
+            int coord_y_per = i - position.pos_y;
+
+            uchar *ptComp = (uchar*) (background->imgData->imageData + i * background->imgData->widthStep);
+            uchar *ptPer = (uchar*) (topaste->imgData->imageData + coord_y_per * topaste->imgData->widthStep);
+            uchar *ptPerMas = (uchar*) (mask->imgData->imageData + coord_y_per * mask->imgData->widthStep);
+
+            for (j = position.pos_x; j < position.pos_x + topaste->imgData->width; j++)
+            {
+                int coord_x_per = j - position.pos_x;
+
+                ptComp[j*3] = (ptComp[j*3] & ptPerMas[coord_x_per * 3]) | (ptPer[coord_x_per * 3] & ~ptPerMas[coord_x_per * 3]);
+                ptComp[j*3+1] = (ptComp[j*3+1] & ptPerMas[coord_x_per * 3 + 1]) | (ptPer[coord_x_per * 3 + 1] & ~ptPerMas[coord_x_per * 3 + 1]);
+                ptComp[j*3+2] = (ptComp[j*3+2] & ptPerMas[coord_x_per * 3 + 2]) | (ptPer[coord_x_per * 3 + 2] & ~ptPerMas[coord_x_per * 3 + 2]);
+            }
+        }
+    }
+    else
+    {
+        for (i = position.pos_y; i < position.pos_y + topaste->imgData->height; i++)
+        {
+            int coord_y_per = i - position.pos_y;
+
+            uchar *ptComp = (uchar*) (background->imgData->imageData + i * background->imgData->widthStep);
+            uchar *ptPer = (uchar*) (topaste->imgData->imageData + coord_y_per * topaste->imgData->widthStep);
+
+            for (j = position.pos_x; j < position.pos_x + topaste->imgData->width; j++)
+            {
+                int coord_x_per = j - position.pos_x;
+                
+                ptComp[j*3] = ptPer[coord_x_per * 3];
+                ptComp[j*3+1] = ptPer[coord_x_per * 3+1];
+                ptComp[j*3+2] = ptPer[coord_x_per * 3+2];
+            }
+        }
+    }
+}
+
+// Funcion privada que pega una superficie sobre otra usando instrucciones SSE
 void SGE_PasteSurfaceWithMaskMMX (SGE_Surface* background, const SGE_Surface* topaste, const SGE_Surface* mask, SGE_Rectangle position)
 {
    int index, jindex;
@@ -251,6 +298,14 @@ void SGE_PasteSurfaceWithMask (SGE_Surface* background, const SGE_Surface* topas
         SGE_ResizeSurface(&topaste2, position.width, position.height);
     }
     
+    int max_pos_x = background->imgData->width - position.width;
+    if (position.pos_x > max_pos_x)
+        position.pos_x = max_pos_x;
+    
+    int max_pos_y = background->imgData->height - position.height;
+    if (position.pos_y > max_pos_y)
+        position.pos_y = max_pos_y;
+    
     // Llamamos a la funcion privada correspondiente en orden de set de instrucciones,
     // del mas rapido al mas lento.
     if (cpuid.SSE2 && &topaste2 == NULL)
@@ -269,9 +324,13 @@ void SGE_PasteSurfaceWithMask (SGE_Surface* background, const SGE_Surface* topas
     {
         SGE_PasteSurfaceWithMaskMMX (background, &topaste2, mask, position);
     }
+    else if (&topaste2 == NULL)
+    {
+        SGE_PasteSurfaceWithMaskAll (background, topaste, mask, position);
+    }
     else
     {
-        // TODO: Funcion compatible para todos los PC's
+        SGE_PasteSurfaceWithMaskAll (background, &topaste2, mask, position);
     }
         
     if (&topaste2 != NULL)
