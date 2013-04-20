@@ -12,57 +12,52 @@
 #include <emmintrin.h>
 #include <xmmintrin.h>
 
-static SGE_Window* gamewindow;
+static int gameinit = 0;
+static SGE_Window gamewindow;
 
-SGE_Window SGE_Init (char* title, int width, int height)
+SGE_Window* SGE_Init (char* title, int width, int height)
 {
-    if (gamewindow != NULL)
+    if (gameinit)
     {
         printf("SGE Error (SGE_Init) => El motor ya ha sido iniciado con anterioridad.");
-        return *gamewindow;
     }
     else
     {
-        SGE_Window toret;
-
-        toret.imgBuffer = SGE_CreateSurface (width, height);
-        toret.imgWindow = toret.imgBuffer;
-        toret.title = title;
+        gamewindow.imgBuffer = SGE_CreateSurface (width, height);
+        gamewindow.imgWindow = gamewindow.imgBuffer;
+        gamewindow.title = title;
 
         cvNamedWindow(title, CV_WINDOW_AUTOSIZE);
-        cvShowImage(title, toret.imgWindow.imgData);
+        cvShowImage(title, gamewindow.imgWindow.imgData);
 
         // Tenemos que esperar a que el otro hilo cree la ventana asincronamente.
         // Como OpenCv no ofrece una funcion para ello, nos "apañamos" esperando un rato.
         cvWaitKey(200);
-        
-        gamewindow = &toret;
-        return toret;
     }
+    
+    return &gamewindow;
 }
 
-void SGE_Update (SGE_Window* w)
+void SGE_Update ()
 {
     cvWaitKey(200);
-    if (&w->imgBuffer != NULL && w->imgBuffer.imgData != w->imgWindow.imgData)
+    if (&gamewindow.imgBuffer != NULL && gamewindow.imgBuffer.imgData != gamewindow.imgWindow.imgData)
     {
-        SGE_FreeSurface(&w->imgWindow);
-        w->imgWindow = w->imgBuffer;
-        w->imgBuffer = SGE_CloneSurface(&w->imgWindow);
-        cvShowImage(w->title, w->imgWindow.imgData);
+        SGE_FreeSurface(&gamewindow.imgWindow);
+        gamewindow.imgWindow = gamewindow.imgBuffer;
+        gamewindow.imgBuffer = SGE_CloneSurface(&gamewindow.imgWindow);
+        cvShowImage(gamewindow.title, gamewindow.imgWindow.imgData);
     }
 }
 
-void SGE_Quit (SGE_Window* w)
+void SGE_Quit ()
 {
-    cvDestroyWindow(w->title);
+    cvDestroyWindow(gamewindow.title);
     
-    SGE_FreeSurface(&w->imgWindow);
-    SGE_FreeSurface(&w->imgBuffer);
+    SGE_FreeSurface(&gamewindow.imgWindow);
+    //SGE_FreeSurface(&gamewindow.imgBuffer);
     
     cvDestroyAllWindows();
-    
-    gamewindow = NULL;
 }
 
 SGE_Surface SGE_CreateSurface (int width, int height)
@@ -84,7 +79,9 @@ SGE_Surface SGE_CreateSurface (int width, int height)
 
 void SGE_FreeSurface(SGE_Surface* srf)
 {
-    cvReleaseImage(&srf->imgData);
+    if (srf)
+        cvReleaseImage(&srf->imgData);
+    
     srf = NULL;
 }
 
@@ -92,7 +89,7 @@ SGE_Surface SGE_LoadImage (char* path)
 {
     SGE_Surface toret;
     SGE_Rectangle dim;
-    IplImage* img;
+    IplImage* img = NULL;
     
     img = cvLoadImage(path, CV_LOAD_IMAGE_UNCHANGED);
     

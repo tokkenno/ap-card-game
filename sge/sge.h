@@ -14,19 +14,19 @@
  * @param name Titulo de la ventana
  * @param width Ancho de la ventana destino
  * @param height Alto de la ventana destino
- * @return Ventana en formato SGE
+ * @return Puntero a la ventana de juego
  */
-SGE_Window SGE_Init (char* name, int width, int height);
+SGE_Window* SGE_Init (char* name, int width, int height);
 
 /**
  * Actualiza la ventana con la nueva imagen generada.
  */
-void SGE_Update (SGE_Window* w);
+void SGE_Update ();
 
 /**
  * Descarga el SGE de memoria y cierra las ventanas.
  */
-void SGE_Quit (SGE_Window* w);
+void SGE_Quit ();
 
 /**
  * Crea una superficie de dibujo
