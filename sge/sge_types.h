@@ -14,6 +14,13 @@
 #define NULL 0
 #endif
 
+#ifndef SGE_DEBUG
+/**
+ * Flag para activar/desactivar los mensajes de debug.
+ */
+#define SGE_DEBUG 1
+#endif
+
 /**
  * Estructura que representa las dimensiones y posicion de una estructura restangular
  */
