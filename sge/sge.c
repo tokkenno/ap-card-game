@@ -12,22 +12,33 @@
 #include <emmintrin.h>
 #include <xmmintrin.h>
 
+static SGE_Window* gamewindow;
+
 SGE_Window SGE_Init (char* title, int width, int height)
 {
-    SGE_Window toret;
-    
-    toret.imgBuffer = SGE_CreateSurface (width, height);
-    toret.imgWindow = toret.imgBuffer;
-    toret.title = title;
-    
-    cvNamedWindow(title, CV_WINDOW_AUTOSIZE);
-    cvShowImage(title, toret.imgWindow.imgData);
-    
-    // Tenemos que esperar a que el otro hilo cree la ventana asincronamente.
-    // Como OpenCv no ofrece una funcion para ello, nos "apañamos" esperando un rato.
-    cvWaitKey(200);
-    
-    return toret;
+    if (gamewindow != NULL)
+    {
+        printf("SGE Error (SGE_Init) => El motor ya ha sido iniciado con anterioridad.");
+        return *gamewindow;
+    }
+    else
+    {
+        SGE_Window toret;
+
+        toret.imgBuffer = SGE_CreateSurface (width, height);
+        toret.imgWindow = toret.imgBuffer;
+        toret.title = title;
+
+        cvNamedWindow(title, CV_WINDOW_AUTOSIZE);
+        cvShowImage(title, toret.imgWindow.imgData);
+
+        // Tenemos que esperar a que el otro hilo cree la ventana asincronamente.
+        // Como OpenCv no ofrece una funcion para ello, nos "apañamos" esperando un rato.
+        cvWaitKey(200);
+        
+        gamewindow = &toret;
+        return toret;
+    }
 }
 
 void SGE_Update (SGE_Window* w)
@@ -50,6 +61,8 @@ void SGE_Quit (SGE_Window* w)
     SGE_FreeSurface(&w->imgBuffer);
     
     cvDestroyAllWindows();
+    
+    gamewindow = NULL;
 }
 
 SGE_Surface SGE_CreateSurface (int width, int height)
@@ -85,7 +98,7 @@ SGE_Surface SGE_LoadImage (char* path)
     
     if (!img)
     {
-        printf("SGE_LoadImage => Error mientras se cargaba una imagen.\n");
+        printf("SGE Error (SGE_LoadImage) => Error mientras se cargaba una imagen.\n");
     }
     
     dim.pos_x = dim.pos_y = 0;
