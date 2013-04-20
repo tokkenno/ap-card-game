@@ -291,11 +291,11 @@ void SGE_PasteSurfaceWithMask (SGE_Surface* background, const SGE_Surface* topas
     SGE_CpuInfo cpuid = SGE_GetCpuInfo();
     
     // Redimensionamos la imagen si es necesario
-    SGE_Surface topaste2;
+    SGE_Surface* topaste2 = NULL;
     if (topaste->imgData->height != position.height || topaste->imgData->width != position.width)
     {
-        topaste2 = SGE_CloneSurface(topaste);
-        SGE_ResizeSurface(&topaste2, position.width, position.height);
+        *topaste2 = SGE_CloneSurface(topaste);
+        SGE_ResizeSurface(topaste2, position.width, position.height);
     }
     
     int max_pos_x = background->imgData->width - position.width;
@@ -308,33 +308,33 @@ void SGE_PasteSurfaceWithMask (SGE_Surface* background, const SGE_Surface* topas
     
     // Llamamos a la funcion privada correspondiente en orden de set de instrucciones,
     // del mas rapido al mas lento.
-    if (cpuid.SSE2 && &topaste2 == NULL)
+    /*if (cpuid.SSE2 && topaste2 == NULL)
     {
         SGE_PasteSurfaceWithMaskSSE2 (background, topaste, mask, position);
     }
-    else if (cpuid.SSE2 && &topaste2 != NULL)
+    else if (cpuid.SSE2 && topaste2 != NULL)
     {
-        SGE_PasteSurfaceWithMaskSSE2 (background, &topaste2, mask, position);
+        SGE_PasteSurfaceWithMaskSSE2 (background, topaste2, mask, position);
     }
-    else if (cpuid.MMX && &topaste2 == NULL)
+    else */if (cpuid.MMX && topaste2 == NULL)
     {
         SGE_PasteSurfaceWithMaskMMX (background, topaste, mask, position);
     }
-    else if (cpuid.MMX && &topaste2 != NULL)
+    else if (cpuid.MMX && topaste2 != NULL)
     {
-        SGE_PasteSurfaceWithMaskMMX (background, &topaste2, mask, position);
+        SGE_PasteSurfaceWithMaskMMX (background, topaste2, mask, position);
     }
-    else if (&topaste2 == NULL)
+    else if (topaste2 == NULL)
     {
         SGE_PasteSurfaceWithMaskAll (background, topaste, mask, position);
     }
     else
     {
-        SGE_PasteSurfaceWithMaskAll (background, &topaste2, mask, position);
+        SGE_PasteSurfaceWithMaskAll (background, topaste2, mask, position);
     }
         
-    if (&topaste2 != NULL)
-        SGE_FreeSurface(&topaste2);
+    if (topaste2 != NULL)
+        SGE_FreeSurface(topaste2);
 }
 
 #pragma region Funciones de tiempo
