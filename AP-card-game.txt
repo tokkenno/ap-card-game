@@ -1,0 +1,16 @@
+1º Crear imagen inicial con todas las cartas boca abajo (función tipo prepararTablero())
+	- Precondiciones: Haber inicializado el juego y tener una superficie en la que jugar (wppal)
+	- Debe asignar un ID a cada carta, habiendo siempre dos cartas con ID igual, para evitar hacer la comparación de imágenes (poco eficiente).
+	- Obviamente, debe haber un random, no deben ir juntas.
+	- Postcondiciones: Un tablero de juego con un número par de cartas boca abajo, iguales dos a dos.
+	- Se usará para iniciar el juego, y para reiniciarlo tras haber ganado en caso.
+2º Permitir escoger una carta (integración con ratón, teclado o lo que sea)
+3º Voltear la carta en cuestión (recargar la imagen con esa carta boca arriba)
+4º Dar 10 segundos para escoger otra carta. (con get ticks y demás)
+5º Voltear la segunda carta.
+	- Si la ID es igual, dejarlas boca arriba y sumar 1 punto.
+	- Si la ID es diferente, volver a ponerlas boca abajo.
+6º Si se han acabado todas las cartas, avisar al ganador.
+7º Preguntar si quiere seguir jugando.
+	- if yes -> goto 1º
+	- else game quit.
