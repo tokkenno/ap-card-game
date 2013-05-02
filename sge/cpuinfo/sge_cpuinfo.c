@@ -1,6 +1,7 @@
 #include "sge_cpuinfo.h"
 
 #ifdef _WIN32
+#include <windows.h>
 #define cpuid __cpuid
 #else
 
