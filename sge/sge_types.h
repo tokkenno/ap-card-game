@@ -11,7 +11,7 @@
 /**
  * Tipo de dato NULL.
  */
-#define NULL 0
+#define NULL ((void*)0)
 #endif
 
 #ifndef SGE_DEBUG
