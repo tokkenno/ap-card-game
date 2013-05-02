@@ -1,3 +1,5 @@
+
+#ifdef __unix__
 #include "sge_timer_unix.h"
 #include "../sge_types.h"
 
@@ -71,3 +73,4 @@ void SGE_DelayUnix (unsigned long ms)
         
     } while (was_error);
 }
+#endif
