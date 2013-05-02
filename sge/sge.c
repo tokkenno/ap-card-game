@@ -2,8 +2,8 @@
 #include "sge_types.h"
 #include "cpuinfo/sge_cpuinfo.h"
 
-#include <cv.h>
-#include <highgui.h>
+#include <opencv/cv.h>
+#include <opencv/highgui.h>
 
 #include <stdio.h>
 

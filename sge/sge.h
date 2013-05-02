@@ -5,8 +5,8 @@
 #ifndef SGE_H
 #define	SGE_H
 
-#include <cv.h>
-#include <highgui.h>
+#include <opencv/cv.h>
+#include <opencv/highgui.h>
 #include "sge_types.h"
 
 /**
