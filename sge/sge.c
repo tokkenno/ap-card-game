@@ -29,6 +29,9 @@ SGE_Window* SGE_Init (char* title, int width, int height)
 
         cvNamedWindow(title, CV_WINDOW_AUTOSIZE);
         cvShowImage(title, gamewindow.imgWindow.imgData);
+        
+        // Inicializamos GetTicks
+        SGE_GetTicks();
 
         // Tenemos que esperar a que el otro hilo cree la ventana asincronamente.
         // Como OpenCv no ofrece una funcion para ello, nos "apañamos" esperando un rato.
@@ -40,13 +43,13 @@ SGE_Window* SGE_Init (char* title, int width, int height)
 
 void SGE_Update ()
 {
-    cvWaitKey(200);
     if (&gamewindow.imgBuffer != NULL && gamewindow.imgBuffer.imgData != gamewindow.imgWindow.imgData)
     {
         SGE_FreeSurface(&gamewindow.imgWindow);
         gamewindow.imgWindow = gamewindow.imgBuffer;
         gamewindow.imgBuffer = SGE_CloneSurface(&gamewindow.imgWindow);
         cvShowImage(gamewindow.title, gamewindow.imgWindow.imgData);
+        cvWaitKey(20);
     }
 }
 
@@ -319,7 +322,7 @@ void SGE_PasteSurfaceWithMask (SGE_Surface* background, const SGE_Surface* topas
     {
         SGE_PasteSurfaceWithMaskSSE2 (background, topaste2, mask, position);
     }
-    else */if (cpuid.MMX && topaste2 == NULL)
+    else if (cpuid.MMX && topaste2 == NULL)
     {
         SGE_PasteSurfaceWithMaskMMX (background, topaste, mask, position);
     }
@@ -327,7 +330,7 @@ void SGE_PasteSurfaceWithMask (SGE_Surface* background, const SGE_Surface* topas
     {
         SGE_PasteSurfaceWithMaskMMX (background, topaste2, mask, position);
     }
-    else if (topaste2 == NULL)
+    else */if (topaste2 == NULL)
     {
         SGE_PasteSurfaceWithMaskAll (background, topaste, mask, position);
     }
@@ -336,8 +339,7 @@ void SGE_PasteSurfaceWithMask (SGE_Surface* background, const SGE_Surface* topas
         SGE_PasteSurfaceWithMaskAll (background, topaste2, mask, position);
     }
         
-    if (topaste2 != NULL)
-        SGE_FreeSurface(topaste2);
+    SGE_FreeSurface(topaste2);
 }
 
 #pragma region Funciones de tiempo
