@@ -2,7 +2,7 @@
  * Tipos de datos definidos por/para SGE
  */
 
-#include <cv.h>
+#include <opencv/cv.h>
 
 #ifndef SGE_TYPES_H
 #define	SGE_TYPES_H
@@ -57,6 +57,11 @@ typedef struct SGE_Window {
     SGE_Surface imgBuffer;        /**< Superficie de dibujado del proximo frame */
     char* title;                /**< Titulo de la ventana */
 } SGE_Window;
+
+/**
+ * Tipo de dato boleano
+ */
+typedef unsigned int boolean;
 
 #endif	/* SGE_TYPES_H */
 

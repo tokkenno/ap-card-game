@@ -1,12 +1,12 @@
 #include "cards.h"
 
-#include <cv.h>
-#include <highgui.h>
+#include <opencv/cv.h>
+#include <opencv/highgui.h>
 
 #include <stdio.h>
 
 // Compara si las imágenes de dos cartas son iguales.
-bool compareCard(card card1, card card2){
+boolean compareCard(card card1, card card2){
     return card1.frontimg == card2.frontimg;
 }
 

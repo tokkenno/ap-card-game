@@ -6,7 +6,8 @@
 #ifndef CARDS_H
 #define	CARDS_H
 
-#include <cv.h>
+#include <opencv/cv.h>
+#include "sge/sge_types.h"
 
 typedef struct {
     SGE_Surface* frontimg;
@@ -23,7 +24,7 @@ typedef struct {
 card createCard(SGE_Surface* front,int x, int y, int width, int height);
 
 // Compara si las imágenes de dos cartas son iguales.
-bool compareCard(card card1, card card2);
+boolean compareCard(card card1, card card2);
 
 // Voltea una carta.
 void voltearCarta(card card1);
