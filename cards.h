@@ -10,24 +10,28 @@
 #include "sge/sge_types.h"
 
 typedef struct {
-    SGE_Surface* frontimg;
-    //IplImage* reverseimg; Mejor mantener un puntero a una única parte trasera en el main.
-    //int x_cord;
-    //int y_cord;
+    int x;
+    int y;
+} coord;
+
+typedef struct {
+    char* frontimg;
+    coord pos1; //Posición del primer ejemplar en el tablero. Default = -1,-1
+    coord pos2; //Posición del segundo ejemplar en el tablero. Default = -1,-1
     int width;
     int height;
-    int cardstate;                  // 0 = Volteada, 1 = Descubierta, -1 = Volteada temporalmente
-    //int showstate;                   0 = Front, 1 = Reverse, 2 = ReverseHover
+    int cardstate; // 0 = Volteada, 1 = Descubierta, -1 = Volteada temporalmente
+
 } card;
 
 // Crea una carta
-card createCard(SGE_Surface* front,int x, int y, int width, int height);
+card createCard(char* front, int width, int height);
 
+void setC1(int x,int y,card* C);
+void setC2(int x,int y,card* C);
 // Compara si las imágenes de dos cartas son iguales.
 boolean compareCard(card card1, card card2);
 
-// Voltea una carta.
-void voltearCarta(card card1);
 
 
 #endif	/* CARDS_H */
